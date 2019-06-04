@@ -10,7 +10,7 @@ export default class MyMixin extends Vue {
   hasNormalizedSlot(name:string) {
     // Returns true if the either a $scopedSlot or $slot exists with the specified name
     return hasNormalizedSlot(name, this.$scopedSlots, this.$slots)
-  },
+  }
   normalizeSlot(name:string, scope = {}) {
     // Returns an array of rendered vNodes if slot found.
     // Returns undefined if not found.
