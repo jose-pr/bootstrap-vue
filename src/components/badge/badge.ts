@@ -1,6 +1,14 @@
-import Vue from '../../utils/vue'
-import { mergeData } from 'vue-functional-data-merge'
+import Vue, { CreateElement, PropOptions } from 'vue'
+import reflectMetadata from "reflect-metadata";
+import { Component, Prop, Model, Watch } from 'vue-property-decorator'
 import { getComponentConfig } from '../../utils/config'
+import { requestAF } from '../../utils/dom'
+import BVTransition from '../../utils/bv-transition'
+import normalizeSlotMixin from '../../mixins/normalize-slot'
+import BButtonClose from '../button/button-close'
+import { mixins } from 'vue-class-component';
+import { BvComponent, Dict } from '../..';
+import { mergeData } from 'vue-functional-data-merge'
 import pluckProps from '../../utils/pluck-props'
 import Link, { propsFactory as linkPropsFactory } from '../link/link'
 
@@ -10,7 +18,7 @@ let linkProps = linkPropsFactory()
 delete linkProps.href.default
 delete linkProps.to.default
 
-export const props = {
+export const props:Dict<PropOptions> = {
   ...linkProps,
   tag: {
     type: String,
