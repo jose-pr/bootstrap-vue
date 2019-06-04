@@ -7,7 +7,7 @@ import { installFactory } from '../../utils/plugins'
 
 // Plugin
 const AlertPlugin:BvPlugin = {
-  install: installFactory({ BAlert }) as any
+  install: installFactory({components:{ BAlert }})
 }
 
 //Exports

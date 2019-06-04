@@ -39,7 +39,7 @@ export interface BvConfigOptions {
 }
 
 // Component base definition
-export interface BvComponent extends Vue,Dict<any> {}
+export interface BvComponent extends Dict<any> {}
 
 // Generic BvEvent Object
 export interface BvEvent {
