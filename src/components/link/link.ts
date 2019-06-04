@@ -4,6 +4,9 @@ import { arrayIncludes, concat } from '../../utils/array'
 import { isFunction } from '../../utils/inspect'
 import { keys } from '../../utils/object'
 import { isRouterLink, computeTag, computeRel, computeHref } from '../../utils/router'
+import { PropOptions, CreateElement } from 'vue';
+import { Dict, BvEvent } from '../..';
+import Component from 'vue-class-component';
 
 /**
  * The Link component is used in many other BV components.
@@ -15,7 +18,7 @@ import { isRouterLink, computeTag, computeRel, computeHref } from '../../utils/r
  * https://github.com/vuejs/vue-router/blob/dev/src/components/link.js
  * @return {{}}
  */
-export const propsFactory = () => {
+export const propsFactory:()=>Dict<PropOptions> = () => {
   return {
     href: {
       type: String,
@@ -82,12 +85,12 @@ export const props = propsFactory()
 
 // Return a fresh copy of <b-link> props
 // Containing only the specified prop(s)
-export const pickLinkProps = propsToPick => {
+export const pickLinkProps = (propsToPick:string[]) => {
   const freshLinkProps = propsFactory()
   // Normalize everything to array.
   propsToPick = concat(propsToPick)
 
-  return keys(freshLinkProps).reduce((memo, prop) => {
+  return keys(freshLinkProps).reduce<Dict<PropOptions>>((memo, prop) => {
     if (arrayIncludes(propsToPick, prop)) {
       memo[prop] = freshLinkProps[prop]
     }
@@ -98,12 +101,12 @@ export const pickLinkProps = propsToPick => {
 
 // Return a fresh copy of <b-link> props
 // Keeping all but the specified omitting prop(s)
-export const omitLinkProps = propsToOmit => {
+export const omitLinkProps = (propsToOmit:string[]) => {
   const freshLinkProps = propsFactory()
   // Normalize everything to array.
   propsToOmit = concat(propsToOmit)
 
-  return keys(props).reduce((memo, prop) => {
+  return keys(props).reduce<Dict<PropOptions>>((memo, prop) => {
     if (!arrayIncludes(propsToOmit, prop)) {
       memo[prop] = freshLinkProps[prop]
     }
@@ -112,8 +115,8 @@ export const omitLinkProps = propsToOmit => {
   }, {})
 }
 
-const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }) => {
-  return function onClick(evt) {
+const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }:{disabled:boolean,tag:string,href:string|null,suppliedHandler:any,parent:Vue}) => {
+  return function onClick(evt:BvEvent) {
     if (disabled && evt instanceof Event) {
       // Stop event from bubbling up.
       evt.stopPropagation()
@@ -128,10 +131,11 @@ const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }) =
         evt.target.__vue__.$emit('click', evt)
       }
       // Call the suppliedHandler(s), if any provided
+      let args = Array.from(arguments);
       concat(suppliedHandler)
         .filter(h => isFunction(h))
         .forEach(handler => {
-          handler(...arguments)
+          handler(...args)
         })
       parent.$root.$emit('clicked::link', evt)
     }
@@ -143,10 +147,8 @@ const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }) =
     }
   }
 }
-
 // @vue/component
 export default Vue.extend({
-  name: 'BLink',
   functional: true,
   props: propsFactory(),
   render(h, { props, data, parent, children }) {
@@ -173,10 +175,10 @@ export default Vue.extend({
     // If href attribute exists on router-link (even undefined or null) it fails working on SSR
     // So we explicitly add it here if needed (i.e. if computeHref() is truthy)
     if (href) {
-      componentData.attrs.href = href
+      componentData!.attrs!.href = href
     } else {
       // Ensure the prop HREF does not exist for router links
-      delete componentData.props.href
+      delete componentData!.props!.href
     }
 
     // We want to overwrite any click handler since our callback
