@@ -2,6 +2,10 @@ import OurVue from './vue'
 import warn from './warn'
 import { setConfig } from './config'
 import { hasWindowSupport, isJSDOM } from './env'
+import { BvComponent, BvPlugin, Dict } from '..';
+import { VueConstructor, DirectiveOptions, DirectiveFunction } from 'vue';
+
+//import Vue from "vue";
 
 /**
  * Checks if there are multiple instances of Vue, and warns (once) about possible issues.
@@ -16,7 +20,7 @@ export const checkMultipleVue = (() => {
     'See: https://bootstrap-vue.js.org/docs#using-module-bundlers'
   ].join('\n')
 
-  return Vue => {
+  return (Vue:VueConstructor) => {
     /* istanbul ignore next */
     if (!checkMultipleVueWarned && OurVue !== Vue && !isJSDOM) {
       warn(MULTIPLE_VUE_WARNING)
@@ -30,8 +34,8 @@ export const checkMultipleVue = (() => {
  * @param {object} { components, directives }
  * @returns {function} plugin install function
  */
-export const installFactory = ({ components, directives, plugins }) => {
-  const install = (Vue, config = {}) => {
+export const installFactory = ({ components, directives, plugins }:{components?:Dict<BvComponent>, directives?:Dict<DirectiveOptions|DirectiveFunction>, plugins?:Dict<BvPlugin>}) => {
+  const install = (Vue:VueConstructor, config = {}) => {
     if (install.installed) {
       /* istanbul ignore next */
       return
@@ -54,7 +58,7 @@ export const installFactory = ({ components, directives, plugins }) => {
  * @param {object} Vue
  * @param {object} Plugin definitions
  */
-export const registerPlugins = (Vue, plugins = {}) => {
+export const registerPlugins = (Vue:VueConstructor, plugins:Dict<BvPlugin> = {}) => {
   for (let plugin in plugins) {
     if (plugin && plugins[plugin]) {
       Vue.use(plugins[plugin])
@@ -68,7 +72,8 @@ export const registerPlugins = (Vue, plugins = {}) => {
  * @param {string} Component name
  * @param {object} Component definition
  */
-export const registerComponent = (Vue, name, def) => {
+
+export const registerComponent = (Vue:VueConstructor, name:string, def:BvComponent) => {
   if (Vue && name && def) {
     Vue.component(name, def)
   }
@@ -79,7 +84,7 @@ export const registerComponent = (Vue, name, def) => {
  * @param {object} Vue
  * @param {object} Object of component definitions
  */
-export const registerComponents = (Vue, components = {}) => {
+export const registerComponents = (Vue:VueConstructor, components:Dict<BvComponent> = {}) => {
   for (let component in components) {
     registerComponent(Vue, component, components[component])
   }
@@ -91,7 +96,7 @@ export const registerComponents = (Vue, components = {}) => {
  * @param {string} Directive name
  * @param {object} Directive definition
  */
-export const registerDirective = (Vue, name, def) => {
+export const registerDirective = (Vue:VueConstructor, name:string, def:DirectiveOptions|DirectiveFunction) => {
   if (Vue && name && def) {
     // Ensure that any leading V is removed from the
     // name, as Vue adds it automatically
@@ -104,7 +109,7 @@ export const registerDirective = (Vue, name, def) => {
  * @param {object} Vue
  * @param {object} Object of directive definitions
  */
-export const registerDirectives = (Vue, directives = {}) => {
+export const registerDirectives = (Vue:VueConstructor, directives:Dict<DirectiveOptions|DirectiveFunction> = {}) => {
   for (let directive in directives) {
     registerDirective(Vue, directive, directives[directive])
   }
@@ -114,7 +119,7 @@ export const registerDirectives = (Vue, directives = {}) => {
  * Install plugin if window.Vue available
  * @param {object} Plugin definition
  */
-export const vueUse = VuePlugin => {
+export const vueUse = (VuePlugin:BvPlugin) => {
   /* istanbul ignore next */
   if (hasWindowSupport && window.Vue) {
     window.Vue.use(VuePlugin)

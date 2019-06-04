@@ -5,6 +5,11 @@ import { componentsPlugin } from './components/index.esm'
 import { directivesPlugin } from './directives/index.esm'
 import BVConfigPlugin from './bv-config'
 
+//Interface for easy creation of dictionaries
+interface Dict<T>{
+  [key:string]:T
+}
+
 // BootstrapVue installer
 const install = installFactory({ plugins: { componentsPlugin, directivesPlugin } })
 
@@ -34,10 +39,7 @@ export interface BvConfigOptions {
 }
 
 // Component base definition
-export interface BvComponent extends Vue {
-  // Simple catch-all to allow any prop/type
-  [key: string]: any
-}
+export interface BvComponent extends Vue,Dict<any> {}
 
 // Generic BvEvent Object
 export interface BvEvent {
@@ -84,5 +86,6 @@ export {
   //   Vue.use(BootstrapVue)
   install,
   setConfig,
-  BvPlugin
+  BvPlugin,
+  Dict
 }
