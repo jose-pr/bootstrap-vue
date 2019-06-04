@@ -1,4 +1,6 @@
 import { isFunction } from './inspect'
+import { Dict } from '..';
+import { NormalizedScopedSlot, VNode, ScopedSlot } from 'vue/types/vnode';
 
 // Note for functional components:
 // In functional components, `slots` is a function so it must be called
@@ -13,7 +15,7 @@ import { isFunction } from './inspect'
  * @param {Object} slots
  * @returns {Array|undefined} vNodes
  */
-const hasNormalizedSlot = (name, $scopedSlots = {}, $slots = {}) => {
+const hasNormalizedSlot = (name:string, $scopedSlots:Dict<NormalizedScopedSlot|undefined> = {}, $slots:Dict<VNode[]|undefined> = {}) => {
   // Returns true if the either a $scopedSlot or $slot exists with the specified name
   return Boolean($scopedSlots[name] || $slots[name])
 }
@@ -27,10 +29,10 @@ const hasNormalizedSlot = (name, $scopedSlots = {}, $slots = {}) => {
  * @param {Object} slots
  * @returns {Array|undefined} vNodes
  */
-const normalizeSlot = (name, scope = {}, $scopedSlots = {}, $slots = {}) => {
+const normalizeSlot = (name:string, scope:ScopedSlot|undefined = undefined, $scopedSlots:Dict<NormalizedScopedSlot|undefined> = {}, $slots:Dict<VNode[]|undefined> = {}) => {
   // Note: in Vue 2.6.x, all names slots are also scoped slots
   const slot = $scopedSlots[name] || $slots[name]
-  return isFunction(slot) ? slot(scope) : slot
+  return isFunction(slot) ? (slot as ScopedSlot)(scope) : slot
 }
 
 // Named exports

@@ -2,6 +2,7 @@ import { hasNormalizedSlot, normalizeSlot } from '../utils/normalize-slot'
 import { concat } from '../utils/array'
 import Component from 'vue-class-component';
 import Vue from 'vue';
+import { ScopedSlot } from 'vue/types/vnode';
 
 @Component
 export default class MyMixin extends Vue {
@@ -11,10 +12,10 @@ export default class MyMixin extends Vue {
     // Returns true if the either a $scopedSlot or $slot exists with the specified name
     return hasNormalizedSlot(name, this.$scopedSlots, this.$slots)
   }
-  normalizeSlot(name:string, scope = {}) {
+  normalizeSlot(name:string, scope?:ScopedSlot) {
     // Returns an array of rendered vNodes if slot found.
     // Returns undefined if not found.
-    const vNodes = normalizeSlot(name, scope as any, this.$scopedSlots, this.$slots)
+    const vNodes = normalizeSlot(name, scope, this.$scopedSlots, this.$slots)
     return vNodes ? concat(vNodes) : vNodes
   }
 }
