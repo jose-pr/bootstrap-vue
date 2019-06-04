@@ -18,7 +18,7 @@ interface BootstrapVuePlugin extends BvPlugin {
   setConfig: (config: BvConfigOptions) => void
 }
 const BootstrapVue:BootstrapVuePlugin = {
-  install: install,
+  install: install as PluginFunction<BvConfigOptions>,
   setConfig: setConfig
 }
 
