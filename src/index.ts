@@ -34,7 +34,7 @@ export interface BvConfigOptions {
 }
 
 // Component base definition
-export class BvComponent extends Vue {
+export interface BvComponent extends Vue {
   // Simple catch-all to allow any prop/type
   [key: string]: any
 }

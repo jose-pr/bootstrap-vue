@@ -8,6 +8,7 @@ import BVTransition from '../../utils/bv-transition'
 import normalizeSlotMixin from '../../mixins/normalize-slot'
 import BButtonClose from '../button/button-close'
 import { mixins } from 'vue-class-component';
+import { BvComponent } from '../..';
 
 const NAME = 'BAlert'
 
@@ -38,7 +39,7 @@ const isNumericLike = (value:numberLike) => !isNaN(parseInt(value as string, 10)
 
 // @vue/component
 @Component
-export default class BAlert extends mixins(normalizeSlotMixin){
+export default class BAlert extends mixins(normalizeSlotMixin) implements BvComponent{
     //Props
     @Prop({default: () => getComponentConfig(NAME, 'variant')}) variant!:string;
     @Prop({default:false})  dismissible!:boolean;
