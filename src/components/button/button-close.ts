@@ -2,10 +2,18 @@ import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
 import { getComponentConfig } from '../../utils/config'
 import { hasNormalizedSlot, normalizeSlot } from '../../utils/normalize-slot'
+import { PropsDef } from '../..';
+import { VNodeData, VNodeChildren } from 'vue';
 
 const NAME = 'BButtonClose'
 
-const props = {
+interface BvButtonClose{
+  disabled:boolean,
+  ariaLabel:string,
+  textVariant:string
+}
+
+const props:PropsDef<BvButtonClose> = {
   disabled: {
     type: Boolean,
     default: false
@@ -29,7 +37,7 @@ export default Vue.extend({
     const $slots = slots()
     const $scopedSlots = scopedSlots || {}
 
-    const componentData = {
+    const componentData:VNodeData = {
       staticClass: 'close',
       class: {
         [`text-${props.textVariant}`]: props.textVariant
@@ -40,7 +48,7 @@ export default Vue.extend({
         'aria-label': props.ariaLabel ? String(props.ariaLabel) : null
       },
       on: {
-        click(e) {
+        click(e:Event) {
           // Ensure click on button HTML content is also disabled
           /* istanbul ignore if: bug in JSDOM still emits click on inner element */
           if (props.disabled && e instanceof Event) {
@@ -57,7 +65,7 @@ export default Vue.extend({
     return h(
       'button',
       mergeData(data, componentData),
-      normalizeSlot('default', {}, $scopedSlots, $slots)
+      normalizeSlot('default', undefined, $scopedSlots, $slots) as VNodeChildren
     )
   }
 })

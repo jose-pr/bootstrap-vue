@@ -6,13 +6,28 @@ import { getComponentConfig } from '../../utils/config'
 import { addClass, removeClass } from '../../utils/dom'
 import { isBoolean, isFunction } from '../../utils/inspect'
 import { keys } from '../../utils/object'
-import BLink, { propsFactory as linkPropsFactory } from '../link/link'
+import BLink, { propsFactory as linkPropsFactory, BvLink } from '../link/link'
+import { PropsDef, Omit, Dict } from '../..';
+import { BButton } from '.';
+import { VNodeData } from 'vue';
 
 // --- Constants --
 
 const NAME = 'BButton'
 
-const btnProps = {
+interface BvButton extends Omit<BvLink,"href"|"to">{
+  block:boolean
+  disabled:boolean
+  size:string
+  variant:string
+  type:string
+  tag:string
+  pill:boolean
+  squared:boolean
+  pressed:boolean|null
+}
+
+const btnProps:PropsDef<BvButton> = {
   block: {
     type: Boolean,
     default: false
@@ -58,12 +73,12 @@ delete linkProps.href.default
 delete linkProps.to.default
 const linkPropKeys = keys(linkProps)
 
-export const props = { ...linkProps, ...btnProps }
+export const props:PropsDef<BvButton> = { ...linkProps, ...btnProps }
 
 // --- Helper methods ---
 
 // Focus handler for toggle buttons.  Needs class of 'focus' when focused.
-const handleFocus = evt => {
+const handleFocus = (evt:Event) => {
   if (evt.type === 'focusin') {
     addClass(evt.target, 'focus')
   } else if (evt.type === 'focusout') {
@@ -72,16 +87,16 @@ const handleFocus = evt => {
 }
 
 // Is the requested button a link?
-const isLink = props => {
+const isLink = (props:BvLink&BvButton) => {
   // If tag prop is set to `a`, we use a b-link to get proper disabled handling
   return Boolean(props.href || props.to || (props.tag && String(props.tag).toLowerCase() === 'a'))
 }
 
 // Is the button to be a toggle button?
-const isToggle = props => isBoolean(props.pressed)
+const isToggle = (props:BvButton) => isBoolean(props.pressed)
 
 // Is the button "really" a button?
-const isButton = props => {
+const isButton = (props:BvButton) => {
   if (isLink(props)) {
     return false
   } else if (props.tag && String(props.tag).toLowerCase() !== 'button') {
@@ -91,10 +106,10 @@ const isButton = props => {
 }
 
 // Is the requested tag not a button or link?
-const isNonStandardTag = props => !isLink(props) && !isButton(props)
+const isNonStandardTag = (props:BvButton) => !isLink(props) && !isButton(props)
 
 // Compute required classes (non static classes)
-const computeClass = props => [
+const computeClass = (props:BvButton) => [
   `btn-${props.variant || getComponentConfig(NAME, 'variant')}`,
   {
     [`btn-${props.size}`]: Boolean(props.size),
@@ -107,10 +122,10 @@ const computeClass = props => [
 ]
 
 // Compute the link props to pass to b-link (if required)
-const computeLinkProps = props => (isLink(props) ? pluckProps(linkPropKeys, props) : null)
+const computeLinkProps = (props:BvButton):BvLink => ((isLink(props) ? pluckProps<any>(linkPropKeys, props) : null) as BvLink)
 
 // Compute the attributes for a button
-const computeAttrs = (props, data) => {
+const computeAttrs = (props:BvButton, data:VNodeData) => {
   const button = isButton(props)
   const link = isLink(props)
   const toggle = isToggle(props)
@@ -144,15 +159,15 @@ const computeAttrs = (props, data) => {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvButton>({
   name: NAME,
   functional: true,
   props,
   render(h, { props, data, listeners, children }) {
     const toggle = isToggle(props)
     const link = isLink(props)
-    const on = {
-      click(e) {
+    const on:Dict<Function>|Function[] = {
+      click(e:Event) {
         /* istanbul ignore if: blink/button disabled should handle this */
         if (props.disabled && e instanceof Event) {
           e.stopPropagation()
@@ -175,7 +190,7 @@ export default Vue.extend({
       on.focusout = handleFocus
     }
 
-    const componentData = {
+    const componentData:VNodeData = {
       staticClass: 'btn',
       class: computeClass(props),
       props: computeLinkProps(props),
