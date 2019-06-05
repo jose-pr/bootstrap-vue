@@ -1,12 +1,5 @@
-import Vue, { CreateElement, PropOptions } from 'vue'
-import reflectMetadata from "reflect-metadata";
-import { Component, Prop, Model, Watch } from 'vue-property-decorator'
+import Vue, { CreateElement, PropOptions, VNodeChildren } from 'vue'
 import { getComponentConfig } from '../../utils/config'
-import { requestAF } from '../../utils/dom'
-import BVTransition from '../../utils/bv-transition'
-import normalizeSlotMixin from '../../mixins/normalize-slot'
-import BButtonClose from '../button/button-close'
-import { mixins } from 'vue-class-component';
 import { BvComponent, Dict } from '../..';
 import { mergeData } from 'vue-functional-data-merge'
 import pluckProps from '../../utils/pluck-props'
@@ -35,11 +28,11 @@ export const props:Dict<PropOptions> = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvComponent>({
   name: NAME,
   functional: true,
   props,
-  render(h, { props, data, children }) {
+  render(h:CreateElement, { props, data, children }) {
     const tag = !props.href && !props.to ? props.tag : Link
 
     const componentData = {

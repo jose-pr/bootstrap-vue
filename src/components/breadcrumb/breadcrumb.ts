@@ -3,16 +3,22 @@ import { mergeData } from 'vue-functional-data-merge'
 import toString from '../../utils/to-string'
 import { isArray, isObject } from '../../utils/inspect'
 import BBreadcrumbItem from './breadcrumb-item'
+import { Dict, BvComponent, PropsDef } from '../..';
+import { BvBreadcrumbLink } from './breadcrumb-link';
 
-export const props = {
+
+export const props:PropsDef<BvBreadcrumb>  = {
   items: {
     type: Array,
     default: null
   }
 }
+interface BvBreadcrumb extends BvComponent{
+  items:BvBreadcrumbLink[]
+}
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvBreadcrumb>({
   name: 'BBreadcrumb',
   functional: true,
   props,

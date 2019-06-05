@@ -1,4 +1,4 @@
-import Vue, { Component, PluginFunction, PluginObject } from 'vue'
+import Vue, { Component, PluginFunction, PluginObject, PropOptions } from 'vue'
 import { installFactory } from './utils/plugins'
 import { setConfig } from './utils/config'
 import { componentsPlugin } from './components/index.esm'
@@ -8,6 +8,9 @@ import BVConfigPlugin from './bv-config'
 //Interface for easy creation of dictionaries
 interface Dict<T>{
   [key:string]:T
+}
+type PropsDef<T> = {
+  [k in keyof T]:PropOptions
 }
 
 // BootstrapVue installer
@@ -39,7 +42,7 @@ export interface BvConfigOptions {
 }
 
 // Component base definition
-export interface BvComponent extends Dict<any> {}
+export interface BvComponent {}
 
 // Generic BvEvent Object
 export interface BvEvent {
@@ -87,5 +90,6 @@ export {
   install,
   setConfig,
   BvPlugin,
-  Dict
+  Dict,
+  PropsDef
 }

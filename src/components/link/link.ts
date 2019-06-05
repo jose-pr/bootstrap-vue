@@ -4,9 +4,9 @@ import { arrayIncludes, concat } from '../../utils/array'
 import { isFunction } from '../../utils/inspect'
 import { keys } from '../../utils/object'
 import { isRouterLink, computeTag, computeRel, computeHref } from '../../utils/router'
-import { PropOptions, CreateElement } from 'vue';
-import { Dict, BvEvent } from '../..';
-import Component from 'vue-class-component';
+import { PropOptions, CreateElement } from 'vue'
+import { Dict, BvEvent, BvComponent } from '../..'
+import Component from 'vue-class-component'
 
 /**
  * The Link component is used in many other BV components.
@@ -18,7 +18,29 @@ import Component from 'vue-class-component';
  * https://github.com/vuejs/vue-router/blob/dev/src/components/link.js
  * @return {{}}
  */
-export const propsFactory:()=>Dict<PropOptions> = () => {
+export interface BvLink extends BvComponent {
+  href?: string
+  rel?: string
+  target?: string
+  active?: boolean
+  disabled?: boolean
+  to?:
+    | string
+    | {
+        path?: string
+        query?: string
+        hash?: string
+      }
+  append?: boolean
+  replace?: boolean
+  event?: string | []
+  activeClass?: string
+  exact?: boolean
+  exactActiveClass?: boolean
+  routerTag?: string
+  noPrefetch?: boolean
+}
+export const propsFactory: () => Record<keyof BvLink, PropOptions> = () => {
   return {
     href: {
       type: String,
@@ -85,8 +107,8 @@ export const props = propsFactory()
 
 // Return a fresh copy of <b-link> props
 // Containing only the specified prop(s)
-export const pickLinkProps = (propsToPick:string[]) => {
-  const freshLinkProps = propsFactory()
+export const pickLinkProps = (propsToPick: string[]) => {
+  const freshLinkProps = propsFactory() as Dict<PropOptions>
   // Normalize everything to array.
   propsToPick = concat(propsToPick)
 
@@ -101,8 +123,8 @@ export const pickLinkProps = (propsToPick:string[]) => {
 
 // Return a fresh copy of <b-link> props
 // Keeping all but the specified omitting prop(s)
-export const omitLinkProps = (propsToOmit:string[]) => {
-  const freshLinkProps = propsFactory()
+export const omitLinkProps = (propsToOmit: string[]) => {
+  const freshLinkProps = propsFactory() as Dict<PropOptions>
   // Normalize everything to array.
   propsToOmit = concat(propsToOmit)
 
@@ -115,8 +137,20 @@ export const omitLinkProps = (propsToOmit:string[]) => {
   }, {})
 }
 
-const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }:{disabled:boolean,tag:string,href:string|null,suppliedHandler:any,parent:Vue}) => {
-  return function onClick(evt:BvEvent) {
+const clickHandlerFactory = ({
+  disabled,
+  tag,
+  href,
+  suppliedHandler,
+  parent
+}: {
+  disabled: boolean
+  tag: string
+  href: string | null
+  suppliedHandler: any
+  parent: Vue
+}) => {
+  return function onClick(evt: BvEvent) {
     if (disabled && evt instanceof Event) {
       // Stop event from bubbling up.
       evt.stopPropagation()
@@ -131,7 +165,7 @@ const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }:{d
         evt.target.__vue__.$emit('click', evt)
       }
       // Call the suppliedHandler(s), if any provided
-      let args = Array.from(arguments);
+      let args = Array.from(arguments)
       concat(suppliedHandler)
         .filter(h => isFunction(h))
         .forEach(handler => {
@@ -147,8 +181,9 @@ const clickHandlerFactory = ({ disabled, tag, href, suppliedHandler, parent }:{d
     }
   }
 }
+
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvLink>({
   functional: true,
   props: propsFactory(),
   render(h, { props, data, parent, children }) {

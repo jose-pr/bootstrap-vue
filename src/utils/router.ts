@@ -88,11 +88,12 @@ export const parseQuery = (query:any) => {
 }
 
 export const isRouterLink = (tag:string) => tag !== ANCHOR_TAG
-interface routerPath {
+interface routerPathObj {
     path?:string,
     query?:string,
     hash?:string
 }
+type routerPath = routerPathObj | string;
 export const computeTag = ({ to, disabled }:{to?:routerPath,disabled?:boolean} = {}, thisOrParent:any) => {
   return thisOrParent.$router && to && !disabled
     ? thisOrParent.$nuxt
@@ -133,10 +134,11 @@ export const computeHref = (
       return to as string || toFallback
     }
     // Fallback to `to.path + to.query + to.hash` prop (if `to` is an object)
-    if (isPlainObject(to) && (to.path || to.query || to.hash)) {
-      const path = toString(to.path)
-      const query = stringifyQueryObj(to.query)
-      let hash = toString(to.hash)
+    let _to = to as routerPathObj;
+    if (isPlainObject(to) && (_to.path || _to.query || _to.hash)) {
+      const path = toString(_to.path)
+      const query = stringifyQueryObj(_to.query)
+      let hash = toString(_to.hash)
       hash = !hash || hash.charAt(0) === '#' ? hash : `#${hash}`
       return `${path}${query}${hash}` || toFallback
     }

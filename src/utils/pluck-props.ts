@@ -1,6 +1,8 @@
 import identity from './identity'
 import { isArray } from './inspect'
 import { keys } from './object'
+import { Dict } from '..';
+import { PropOptions } from 'vue';
 
 /**
  * Given an array of properties or an object of property keys,
@@ -12,8 +14,8 @@ import { keys } from './object'
  * @param {Function} transformFn
  * @return {{}}
  */
-const pluckProps = (keysToPluck, objToPluck, transformFn = identity) => {
-  return (isArray(keysToPluck) ? keysToPluck.slice() : keys(keysToPluck)).reduce((memo, prop) => {
+const pluckProps = <T extends {}>(keysToPluck:Dict<any>|string[], objToPluck:Dict<T>, transformFn:(id:string)=>string = identity):Dict<T> => {
+  return (isArray(keysToPluck) ? keysToPluck.slice() : keys(keysToPluck)).reduce<Dict<any>>((memo, prop) => {
     memo[transformFn(prop)] = objToPluck[prop]
     return memo
   }, {})

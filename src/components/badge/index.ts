@@ -6,7 +6,7 @@ import BBadge from './badge'
 import { installFactory } from '../../utils/plugins'
 
 // Plugin
-const BadgePlugin:BvPlugin = {
+export const BadgePlugin:BvPlugin = {
   install: installFactory({components:{ BBadge }})
 }
 

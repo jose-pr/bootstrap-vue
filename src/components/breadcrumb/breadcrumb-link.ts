@@ -1,10 +1,12 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
 import pluckProps from '../../utils/pluck-props'
-import BLink, { propsFactory as linkPropsFactory } from '../link/link'
+import BLink, { propsFactory as linkPropsFactory, BvLink } from '../link/link'
 import { htmlOrText } from '../../utils/html'
+import { PropOptions, VNodeData } from 'vue';
+import { Dict, BvComponent, PropsDef } from '../..';
 
-export const props = {
+export const props:PropsDef<BvBreadcrumbLink> = {
   ...linkPropsFactory(),
   text: {
     type: String,
@@ -19,16 +21,20 @@ export const props = {
     default: 'location'
   }
 }
-
+export interface BvBreadcrumbLink extends BvLink{
+  text?:string,
+  html?:string,
+  ariaCurrent?:string
+}
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvBreadcrumbLink>({
   name: 'BBreadcrumbLink',
   functional: true,
   props,
   render(h, { props: suppliedProps, data, children }) {
     const tag = suppliedProps.active ? 'span' : BLink
-
-    let componentData = { props: pluckProps(props, suppliedProps) }
+    
+    let componentData:VNodeData = { props: pluckProps(props, suppliedProps) }
     if (suppliedProps.active) {
       componentData.attrs = { 'aria-current': suppliedProps.ariaCurrent }
     }

@@ -1,9 +1,9 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
-import BBreadcrumbLink, { props } from './breadcrumb-link'
+import BBreadcrumbLink, { props, BvBreadcrumbLink } from './breadcrumb-link'
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvBreadcrumbLink>({
   name: 'BBreadcrumbItem',
   functional: true,
   props,
