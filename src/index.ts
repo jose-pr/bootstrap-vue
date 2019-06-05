@@ -12,6 +12,7 @@ interface Dict<T>{
 type PropsDef<T> = {
   [k in keyof T]:PropOptions
 }
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 // BootstrapVue installer
 const install = installFactory({ plugins: { componentsPlugin, directivesPlugin } })
@@ -91,5 +92,6 @@ export {
   setConfig,
   BvPlugin,
   Dict,
-  PropsDef
+  PropsDef,
+  Omit
 }
