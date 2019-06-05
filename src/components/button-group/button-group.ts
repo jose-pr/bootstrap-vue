@@ -1,7 +1,14 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
+import { PropsDef, BvComponent } from '../..';
 
-export const props = {
+interface BvButtonGroup extends BvComponent{
+  vertical:boolean
+  size:string,
+  tag:string,
+  ariaRole:string
+}
+export const props:PropsDef<BvButtonGroup> = {
   vertical: {
     type: Boolean,
     default: false
