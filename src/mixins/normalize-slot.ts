@@ -5,8 +5,7 @@ import Vue from 'vue';
 import { ScopedSlot } from 'vue/types/vnode';
 
 @Component
-export default class MyMixin extends Vue {
-  mixinValue:string = 'Hello';
+export default class NormalizeSlotMixin extends Vue {
   _uid:string|number|undefined;
   hasNormalizedSlot(name:string) {
     // Returns true if the either a $scopedSlot or $slot exists with the specified name
