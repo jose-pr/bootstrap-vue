@@ -9,9 +9,5 @@ import { componentsPlugin } from './index.esm'
 // Export all component group plugins and components as named exports
 export * from './index.esm'
 
-// Export all legacy name component group plugins as named exports
-// To be removed in stable release
-export * from './plugins-legacy'
-
 // Export default as a plugin that installs all the component group plugins
 export default componentsPlugin

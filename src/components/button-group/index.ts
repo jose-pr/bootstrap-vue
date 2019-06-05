@@ -16,4 +16,4 @@ export { BButtonGroup }
 export const ButtonGroupPlugin:BvPlugin = {
   install: installFactory({ components })
 }
-
+export default ButtonGroupPlugin
