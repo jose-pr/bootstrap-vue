@@ -1,5 +1,6 @@
 import { MutationObs, isElement } from './dom'
 import { warnNoMutationObserverSupport } from './warn'
+import Vue from "vue"
 
 /**
  * Observe a DOM element changes, falls back to eventListener mode
@@ -8,13 +9,13 @@ import { warnNoMutationObserverSupport } from './warn'
  * @param {object} [opts={childList: true, subtree: true}] observe options
  * @see http://stackoverflow.com/questions/3219758
  */
-const observeDom = (el, callback, opts) => /* istanbul ignore next: difficult to test in JSDOM */ {
+const observeDom = (el:Element|Vue|null, callback:()=>void, opts?:MutationObserverInit) => /* istanbul ignore next: difficult to test in JSDOM */ {
   // Handle cases where we might be passed a Vue instance
-  el = el ? el.$el || el : null
+  el = el ? (el as Vue).$el || el : null
 
   // Early exit when we have no element
   /* istanbul ignore next: difficult to test in JSDOM */
-  if (!isElement(el)) {
+  if (!isElement(el as Element)) {
     return null
   }
 
@@ -64,7 +65,7 @@ const observeDom = (el, callback, opts) => /* istanbul ignore next: difficult to
   })
 
   // Have the observer observe foo for changes in children, etc
-  obs.observe(el, { childList: true, subtree: true, ...opts })
+  obs.observe(el as Element, { childList: true, subtree: true, ...opts })
 
   // We return a reference to the observer so that `obs.disconnect()`
   // can be called if necessary

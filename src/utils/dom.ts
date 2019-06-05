@@ -47,9 +47,12 @@ export const requestAF =
     return setTimeout(cb, 16)
   })
 
-export const MutationObs:MutationObserver =
+export const MutationObs:MutationObs =
 (w as any).MutationObserver || (w as any).WebKitMutationObserver || (w as any).MozMutationObserver || null
 
+interface MutationObs{
+  new (callback: MutationCallback):MutationObserver
+}
 // --- Utils ---
 
 // Normalize event options based on support of passive option
