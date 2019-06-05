@@ -47,7 +47,7 @@ export const requestAF =
     return setTimeout(cb, 16)
   })
 
-export const MutationObs =
+export const MutationObs:MutationObserver =
 (w as any).MutationObserver || (w as any).WebKitMutationObserver || (w as any).MozMutationObserver || null
 
 // --- Utils ---
