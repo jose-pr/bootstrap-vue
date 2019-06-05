@@ -66,14 +66,14 @@ export const parseEventOptions = (options:boolean|EventListenerOptions):EventLis
 }
 
 // Attach an event listener to an element
-export const eventOn = (el:Element, evtName:string, handler:EventHandlerNonNull, options:EventListenerOptions) => {
+export const eventOn = (el:Element|Document|Window, evtName:string, handler:EventHandlerNonNull, options:EventListenerOptions) => {
   if (el && el.addEventListener) {
     el.addEventListener(evtName, handler, parseEventOptions(options))
   }
 }
 
 // Remove an event listener from an element
-export const eventOff = (el:Element, evtName:string, handler:EventHandlerNonNull, options:EventListenerOptions) => {
+export const eventOff = (el:Element|Document|Window, evtName:string, handler:EventHandlerNonNull, options:EventListenerOptions) => {
   if (el && el.removeEventListener) {
     el.removeEventListener(evtName, handler, parseEventOptions(options))
   }

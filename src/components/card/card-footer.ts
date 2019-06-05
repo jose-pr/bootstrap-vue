@@ -5,8 +5,19 @@ import prefixPropName from '../../utils/prefix-prop-name'
 import copyProps from '../../utils/copy-props'
 import { htmlOrText } from '../../utils/html'
 import cardMixin from '../../mixins/card-mixin'
+import { BvComponent, PropsDef } from '../..';
 
-export const props = {
+export interface BvCardFooter extends BvComponent{
+  footerClass:string|string[] //add to mixin
+  footerHtml:string
+  footerTag: string
+  footerBgVariant: string
+  footerBorderVariant: string
+  footerTextVariant: string
+  footer:string
+}
+
+export const props:PropsDef<BvCardFooter> = {
   ...copyProps(cardMixin.props, prefixPropName.bind(null, 'footer')),
   footer: {
     type: String,
@@ -23,7 +34,7 @@ export const props = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvCardFooter>({
   name: 'BCardFooter',
   functional: true,
   props,

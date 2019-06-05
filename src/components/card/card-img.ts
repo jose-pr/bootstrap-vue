@@ -1,7 +1,21 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
+import { PropsDef } from '../..';
 
-export const props = {
+export interface BvCardImg {
+  src:string
+  alt:string
+  top:boolean
+  bottom:boolean
+  left:boolean
+  start:boolean
+  right:boolean
+  end:boolean
+  height:string
+  width:string
+}
+
+export const props:PropsDef<BvCardImg> = {
   src: {
     type: String,
     default: null,
@@ -48,7 +62,7 @@ export const props = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvCardImg>({
   name: 'BCardImg',
   functional: true,
   props,

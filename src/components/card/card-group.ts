@@ -1,7 +1,14 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
+import { BvComponent, PropsDef } from '../..';
 
-export const props = {
+export interface BvCardGroup extends BvComponent{
+  tag:string
+  deck:boolean,
+  columns:boolean
+}
+
+export const props:PropsDef<BvCardGroup> = {
   tag: {
     type: String,
     default: 'div'
@@ -17,7 +24,7 @@ export const props = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvCardGroup>({
   name: 'BCardGroup',
   functional: true,
   props,

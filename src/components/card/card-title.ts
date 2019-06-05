@@ -1,7 +1,12 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
+import { BvComponent, PropsDef } from '../..';
 
-export const props = {
+export interface BvCardTitle extends BvComponent{
+  title:string,
+  titleTag:string
+}
+export const props:PropsDef<BvCardTitle> = {
   title: {
     type: String,
     default: ''
@@ -13,7 +18,7 @@ export const props = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvCardTitle>({
   name: 'BCardTitle',
   functional: true,
   props,

@@ -80,9 +80,9 @@ export const props:PropsDef<BvButton> = { ...linkProps, ...btnProps }
 // Focus handler for toggle buttons.  Needs class of 'focus' when focused.
 const handleFocus = (evt:Event) => {
   if (evt.type === 'focusin') {
-    addClass(evt.target, 'focus')
+    addClass(evt.target as HTMLElement, 'focus')
   } else if (evt.type === 'focusout') {
-    removeClass(evt.target, 'focus')
+    removeClass(evt.target as HTMLElement, 'focus')
   }
 }
 

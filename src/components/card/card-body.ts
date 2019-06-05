@@ -3,11 +3,21 @@ import { mergeData } from 'vue-functional-data-merge'
 import prefixPropName from '../../utils/prefix-prop-name'
 import copyProps from '../../utils/copy-props'
 import pluckProps from '../../utils/pluck-props'
-import cardMixin from '../../mixins/card-mixin'
-import BCardTitle, { props as titleProps } from './card-title'
-import BCardSubTitle, { props as subTitleProps } from './card-sub-title'
+import cardMixin, { CardMixin } from '../../mixins/card-mixin'
+import BCardTitle, { props as titleProps, BvCardTitle } from './card-title'
+import BCardSubTitle, { props as subTitleProps, BvCardSubTitle } from './card-sub-title'
+import { BvComponent, PropsDef } from '../..';
 
-export const props = {
+export interface BvCardBody extends BvComponent, BvCardTitle, BvCardSubTitle{
+  bodyClass:string|string[],
+  overlay:boolean,
+  bodyTag: string
+  bodyBgVariant: string
+  bodyBorderVariant: string
+  bodyTextVariant: string
+}
+
+export const props:PropsDef<BvCardBody> = {
   // Import common card props and prefix them with `body-`
   ...copyProps(cardMixin.props, prefixPropName.bind(null, 'body')),
   bodyClass: {
@@ -23,17 +33,17 @@ export const props = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvCardBody>({
   name: 'BCardBody',
   functional: true,
   props,
   render(h, { props, data, children }) {
-    let cardTitle = h(false)
-    let cardSubTitle = h(false)
-    let cardContent = children || [h(false)]
+    let cardTitle = h(undefined)
+    let cardSubTitle = h(undefined)
+    let cardContent = children || [h(undefined)]
 
     if (props.title) {
-      cardTitle = h(BCardTitle, { props: pluckProps(titleProps, props) })
+      cardTitle = h(BCardTitle, { props: pluckProps<BvCardTitle>(titleProps, props) })
     }
 
     if (props.subTitle) {

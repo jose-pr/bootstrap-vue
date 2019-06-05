@@ -14,11 +14,11 @@ import { PropOptions } from 'vue';
  * @param {Function} transformFn
  * @return {{}}
  */
-const pluckProps = <T extends {}>(keysToPluck:Dict<any>|string[], objToPluck:Dict<T>, transformFn:(id:string)=>string = identity):Dict<T> => {
+const pluckProps = <T = Dict<any>>(keysToPluck:Dict<any>|string[], objToPluck:Dict<any>, transformFn:(id:string)=>string = identity):T => {
   return (isArray(keysToPluck) ? keysToPluck.slice() : keys(keysToPluck)).reduce<Dict<any>>((memo, prop) => {
     memo[transformFn(prop)] = objToPluck[prop]
     return memo
-  }, {})
+  }, {}) as T
 }
 
 export default pluckProps

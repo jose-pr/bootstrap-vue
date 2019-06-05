@@ -9,6 +9,7 @@ import BCardImgLazy from './card-img-lazy'
 import BCardText from './card-text'
 import BCardGroup from './card-group'
 import { installFactory } from '../../utils/plugins'
+import { BvPlugin } from '../..';
 
 const components = {
   BCard,
@@ -34,8 +35,9 @@ export {
   BCardImgLazy,
   BCardText,
   BCardGroup
-}
+} 
 
-export default {
+export  const CardPlugin: BvPlugin ={
   install: installFactory({ components })
 }
+export default CardPlugin

@@ -5,21 +5,42 @@ import unPrefixPropName from '../../utils/unprefix-prop-name'
 import copyProps from '../../utils/copy-props'
 import pluckProps from '../../utils/pluck-props'
 import { hasNormalizedSlot, normalizeSlot } from '../../utils/normalize-slot'
-import cardMixin from '../../mixins/card-mixin'
-import BCardBody, { props as bodyProps } from './card-body'
-import BCardHeader, { props as headerProps } from './card-header'
-import BCardFooter, { props as footerProps } from './card-footer'
-import BCardImg, { props as imgProps } from './card-img'
+import cardMixin, { CardMixin } from '../../mixins/card-mixin'
+import BCardBody, { props as bodyProps, BvCardBody } from './card-body'
+import BCardHeader, { props as headerProps, BvCardHeader } from './card-header'
+import BCardFooter, { props as footerProps, BvCardFooter } from './card-footer'
+import BCardImg, { props as imgProps, BvCardImg } from './card-img'
+import { PropsDef } from '../..';
+import { VNodeChildren, VNode } from 'vue';
+import {BCardImg as i} from "./index"
 
-const cardImgProps = copyProps(imgProps, prefixPropName.bind(null, 'img'))
+interface _img {
+  imgSrc:string
+  imgAlt:string
+  imgTop:boolean
+  imgBottom:boolean
+  imgLeft:boolean
+  imgStart:boolean
+  imgRight:boolean
+  imgEnd:boolean
+  imgHeight:string
+  imgWidth:string
+}
+
+const cardImgProps = copyProps(imgProps, prefixPropName.bind(null, 'img')) as PropsDef<_img>
 cardImgProps.imgSrc.required = false
 
-export const props = {
+interface BvCard extends BvCardBody, BvCardHeader, BvCardFooter, CardMixin, _img{
+  align:string
+  noBody:boolean
+}
+
+export const props:PropsDef<BvCard> = {
   ...bodyProps,
   ...headerProps,
   ...footerProps,
   ...cardImgProps,
-  ...copyProps(cardMixin.props),
+  ...copyProps(cardMixin.props) as PropsDef<CardMixin> ,
   align: {
     type: String,
     default: null
@@ -31,7 +52,7 @@ export const props = {
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvCard>({
   name: 'BCard',
   functional: true,
   props,
@@ -41,15 +62,15 @@ export default Vue.extend({
     const $scopedSlots = scopedSlots || {}
 
     // Create placeholder elements for each section
-    let imgFirst = h(false)
-    let header = h(false)
-    let content = h(false)
-    let footer = h(false)
-    let imgLast = h(false)
+    let imgFirst = h()
+    let header = h()
+    let content:VNode|VNode[] = h()
+    let footer = h()
+    let imgLast = h()
 
     if (props.imgSrc) {
       let img = h(BCardImg, {
-        props: pluckProps(cardImgProps, props, unPrefixPropName.bind(null, 'img'))
+        props: pluckProps<BvCardImg>(cardImgProps, props, unPrefixPropName.bind(null, 'img'))
       })
       if (props.imgBottom) {
         imgLast = img
@@ -62,11 +83,11 @@ export default Vue.extend({
       header = h(
         BCardHeader,
         { props: pluckProps(headerProps, props) },
-        normalizeSlot('header', {}, $scopedSlots, $slots)
+        normalizeSlot('header', undefined, $scopedSlots, $slots) as VNodeChildren
       )
     }
 
-    content = normalizeSlot('default', {}, $scopedSlots, $slots) || []
+    content = (normalizeSlot('default', undefined, $scopedSlots, $slots) || []) as VNode[]
     if (!props.noBody) {
       // Wrap content in card-body
       content = [h(BCardBody, { props: pluckProps(bodyProps, props) }, [...content])]
@@ -78,7 +99,7 @@ export default Vue.extend({
         {
           props: pluckProps(footerProps, props)
         },
-        normalizeSlot('footer', {}, $scopedSlots, $slots)
+        normalizeSlot('footer', undefined, $scopedSlots, $slots) as VNodeChildren
       )
     }
 
