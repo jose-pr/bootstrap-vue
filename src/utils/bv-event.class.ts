@@ -1,7 +1,28 @@
 import { assign, defineProperty, defineProperties, readonlyDescriptor } from './object'
 
-class BvEvent {
-  constructor(type, eventInit = {}) {
+interface BvEventInit {
+  type:string;
+  cancelable:boolean;
+  nativeEvent:boolean;
+  target:Element|null;
+  relatedTarget:Element|null;
+  vueTarget:any;
+  componentId:string;
+}
+
+class BvEvent<T=never> {
+  
+  type!:string;
+  cancelable!:boolean;
+  nativeEvent!:boolean;
+  target!:Element|null;
+  relatedTarget!:Element|null;
+  vueTarget!:any;
+  componentId!:string;
+
+  preventDefault!:()=>void;
+
+  constructor(type:string, eventInit:Partial<BvEventInit&T> = {}) {
     // Start by emulating native Event constructor.
     if (!type) {
       /* istanbul ignore next */
@@ -13,7 +34,7 @@ class BvEvent {
     }
     // Assign defaults first, the eventInit,
     // and the type last so it can't be overwritten.
-    assign(this, BvEvent.Defaults, this.constructor.Defaults, eventInit, { type })
+    assign(this, BvEvent.Defaults, (this.constructor as any).Defaults, eventInit, { type })
     // Freeze some props as readonly, but leave them enumerable.
     defineProperties(this, {
       type: readonlyDescriptor(),

@@ -1,5 +1,8 @@
 import assignPolyfill from 'core-js/library/fn/object/assign'
 import isPolyfill from 'core-js/library/fn/object/is'
+import { Dict } from '..';
+import { config } from '@vue/test-utils';
+import { write } from 'fs';
 
 // --- Static ---
 
@@ -22,18 +25,18 @@ export const is = Object.is || isPolyfill
  * is a JSON-compliant type.
  * Note object could be a complex type like array, date, etc.
  */
-export const isObject = obj => obj !== null && typeof obj === 'object'
+export const isObject = (obj:any) => obj !== null && typeof obj === 'object'
 
 /**
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
  */
-export const isPlainObject = obj => Object.prototype.toString.call(obj) === '[object Object]'
+export const isPlainObject = (obj:any) => Object.prototype.toString.call(obj) === '[object Object]'
 
 // @link https://gist.github.com/bisubus/2da8af7e801ffd813fab7ac221aa7afc
-export const omit = (obj, props) =>
+export const omit = (obj:Dict<any>, props:string[]) =>
   keys(obj)
     .filter(key => props.indexOf(key) === -1)
     .reduce((result, key) => ({ ...result, [key]: obj[key] }), {})
 
-export const readonlyDescriptor = () => ({ enumerable: true, configurable: false, writable: false })
+export const readonlyDescriptor = ():PropertyDescriptor => ({ enumerable: true, configurable: false, writable: false })
