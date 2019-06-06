@@ -193,7 +193,7 @@ export default Vue.extend<BvLink>({
     const eventType = isRouterLink(tag) ? 'nativeOn' : 'on'
     const suppliedHandler = (data[eventType] || {}).click
     const handlers = {
-      click: clickHandlerFactory({ tag, href, disabled: props.disabled, suppliedHandler, parent })
+      click: clickHandlerFactory({ tag, href, disabled: props.disabled!, suppliedHandler, parent })
     }
 
     const componentData = mergeData(data, {

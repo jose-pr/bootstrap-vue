@@ -1,12 +1,27 @@
 import Vue from '../../utils/vue'
 import { mergeData } from 'vue-functional-data-merge'
+import { BvComponent, PropsDef } from '../..';
+import Component from 'vue-class-component';
+import { BTab } from '../tabs';
 
 // -- Constants --
 
 const DEPRECATED_MSG =
   'Setting prop "is-nav-bar" is deprecated. Use the <b-navbar-nav> component instead.'
 
-export const props = {
+export interface  BvNav extends BvComponent{
+  tag:string;
+  fill:boolean;
+  justified:boolean;
+  align:string;
+  tabs:BTab[];
+  pills:boolean;
+  vertical:boolean;
+  small:boolean;
+}
+
+
+export const props:PropsDef<BvNav> = {
   tag: {
     type: String,
     default: 'ul'
@@ -38,26 +53,19 @@ export const props = {
   small: {
     type: Boolean,
     default: false
-  },
-  isNavBar: {
-    type: Boolean,
-    default: false,
-    // `deprecated` -> Don't use this prop
-    // `deprecation` -> Refers to a change in prop usage
-    deprecated: DEPRECATED_MSG
   }
 }
 
 // -- Utils --
 
-const computeJustifyContent = value => {
+const computeJustifyContent = (value:string) => {
   // Normalize value
   value = value === 'left' ? 'start' : value === 'right' ? 'end' : value
   return `justify-content-${value}`
 }
 
 // @vue/component
-export default Vue.extend({
+export default Vue.extend<BvNav>({
   name: 'BNav',
   functional: true,
   props,
@@ -66,11 +74,10 @@ export default Vue.extend({
       props.tag,
       mergeData(data, {
         class: {
-          nav: !props.isNavBar,
-          'navbar-nav': props.isNavBar,
-          'nav-tabs': props.tabs && !props.isNavBar,
-          'nav-pills': props.pills && !props.isNavBar,
-          'flex-column': props.vertical && !props.isNavBar,
+          nav: true,
+          'nav-tabs': props.tabs,
+          'nav-pills': props.pills,
+          'flex-column': props.vertical,
           'nav-fill': !props.vertical && props.fill,
           'nav-justified': !props.vertical && props.justified,
           [computeJustifyContent(props.align)]: !props.vertical && props.align,
