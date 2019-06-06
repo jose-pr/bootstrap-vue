@@ -13,6 +13,9 @@ type PropsDef<T> = {
   [k in keyof T]:PropOptions
 }
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+export type ElementClass = string | string[]
+export type NumberLike = string | number
+export type BooleanLike = string | number | boolean
 
 // BootstrapVue installer
 const install = installFactory({ plugins: { componentsPlugin, directivesPlugin } })
