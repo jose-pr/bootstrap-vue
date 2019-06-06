@@ -3,11 +3,15 @@ import { PortalTarget, Wormhole } from 'portal-vue'
 import warn from '../../utils/warn'
 import { getComponentConfig } from '../../utils/config'
 import { removeClass, requestAF } from '../../utils/dom'
+import Component from 'vue-class-component';
+import { CreateElement } from 'vue';
+import { Prop } from 'vue-property-decorator';
+import { BvComponent } from '../..';
 
 // --- Constants ---
 
 const NAME = 'BToaster'
-
+/*
 export const props = {
   name: {
     type: String,
@@ -31,29 +35,25 @@ export const props = {
     type: [Boolean, String, Object],
     default: false
   }
-  */
-}
+  
+} */
 
 // @vue/component
-export const DefaultTransition = Vue.extend({
-  data() {
-    return {
-      // Transition classes base name
-      name: 'b-toaster'
-    }
-  },
-  methods: {
-    onAfterEnter(el) {
-      // Handle bug where enter-to class is not removed.
-      // Bug is related to portal-vue and transition-groups.
-      requestAF(() => {
-        removeClass(el, `${this.name}-enter-to`)
-        // The *-move class is also stuck on elements that moved,
-        // but there are no javascript hooks to handle after move.
-      })
-    }
-  },
-  render(h) {
+@Component({})
+export class DefaultTransition extends Vue{
+  name:string = 'b-toaster'
+
+  onAfterEnter(el:HTMLElement) {
+    // Handle bug where enter-to class is not removed.
+    // Bug is related to portal-vue and transition-groups.
+    requestAF(() => {
+      removeClass(el, `${this.name}-enter-to`)
+      // The *-move class is also stuck on elements that moved,
+      // but there are no javascript hooks to handle after move.
+    })
+  }
+
+  render(h:CreateElement) {
     return h(
       'transition-group',
       {
@@ -63,21 +63,24 @@ export const DefaultTransition = Vue.extend({
       this.$slots.default
     )
   }
-})
+}
 
 // @vue/component
-export default Vue.extend({
-  name: NAME,
-  props,
-  data() {
-    return {
-      // We don't render on SSR or if a an existing target found
-      doRender: false,
-      dead: false,
-      // Toaster names cannot change once created
-      staticName: this.name
-    }
-  },
+@Component({})
+export default class BToaster extends Vue implements BvComponent{
+
+  @Prop({required:true}) name!:string
+  @Prop({default:() => getComponentConfig(NAME, 'ariaLive') }) ariaLive!:string
+  @Prop({default:() => getComponentConfig(NAME, 'ariaAtomic') }) ariaAtomic!:string
+  @Prop({default:() => getComponentConfig(NAME, 'role') }) role!:string
+ // @Prop({default:false}) transition!:boolean|string|{}
+
+  // We don't render on SSR or if a an existing target found
+  doRender:boolean = false
+  dead:boolean = false
+  // Toaster names cannot change once created
+  staticName:string = this.name
+
   beforeMount() {
     this.staticName = this.name
     /* istanbul ignore if */
@@ -92,15 +95,17 @@ export default Vue.extend({
         this.$root.$emit('bv::toaster::destroyed', this.staticName)
       })
     }
-  },
+  }
+
   destroyed() {
     // Remove from DOM if needed
     /* istanbul ignore next: difficult to test */
     if (this.$el && this.$el.parentNode) {
       this.$el.parentNode.removeChild(this.$el)
     }
-  },
-  render(h) {
+  }
+
+  render(h:CreateElement) {
     let $toaster = h('div', { class: ['d-none', { 'b-dead-toaster': this.dead }] })
     if (this.doRender) {
       const $target = h(PortalTarget, {
@@ -131,4 +136,4 @@ export default Vue.extend({
     }
     return $toaster
   }
-})
+}
